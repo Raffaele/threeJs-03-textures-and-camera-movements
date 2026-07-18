@@ -1,4 +1,4 @@
-# 02-object-rotation
+# 03-textures-and-camera-movements
 
 Learning exercise for **Three.js + TypeScript**, focused on fixture load and camera movement.
 
