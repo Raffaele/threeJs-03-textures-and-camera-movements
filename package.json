@@ -1,8 +1,22 @@
 {
   "name": "03-textures-and-camera-movements",
   "version": "1.0.0",
-  "main": "index.js",
   "repository": "git@github.com:Raffaele/threeJs-03-textures-and-camera-movements.git",
   "author": "Raffaele <mori.raffaele@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/dat.gui": "^0.7.13",
+    "@types/three": "^0.185.1",
+    "gh-pages": "^6.2.0",
+    "parcel": "^2.16.4"
+  },
+  "scripts": {
+    "start": "parcel ./src/index.html",
+    "build": "parcel build ./src/index.html --public-url ./",
+    "deploy": "yarn build && gh-pages -d dist"
+  },
+  "dependencies": {
+    "dat.gui": "^0.7.9",
+    "three": "^0.185.1"
+  }
 }
