@@ -78,9 +78,13 @@ function setupEnvironment() {
     }
   }, false);
 
+  const color = 0x282828;
+  const light = new THREE.HemisphereLight(color, color, 1.8);
+  scene.add(light);
+
   function animate() {
     renderer.render(scene, camera);
-    star.rotation.z += 0.001;
+    star.rotation.z += 0.0003;
     cubes.forEach((cube, cubeIndex) => {
       cube.rotation.x += 0.002 * (cubeIndex + 1);
       cube.rotation.y += 0.001 * (cubeIndex + 1);
