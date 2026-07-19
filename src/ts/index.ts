@@ -56,16 +56,13 @@ function setupEnvironment() {
   const star = createStar();
   scene.add(star);
 
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'ArrowUp') {
-      camera.position.add(getCameraStep(camera, STEP));
-    } else if (event.key === 'ArrowDown') {
-      camera.position.sub(getCameraStep(camera, STEP));
-    } else if (event.key === 'ArrowLeft') {
-      camera.rotation.y += ROTATION_STEP;
-    } else if (event.key === 'ArrowRight') {
-      camera.rotation.y -= ROTATION_STEP;
-    }
+  function moveCamera(position: string) {
+    if (position === 'ArrowUp') { camera.position.add(getCameraStep(camera, STEP)); }
+    else if (position === 'ArrowDown') { camera.position.sub(getCameraStep(camera, STEP)); }
+    else if (position === 'ArrowLeft') { camera.rotation.y += ROTATION_STEP; }
+    else if (position === 'ArrowRight') { camera.rotation.y -= ROTATION_STEP; }
+    else return;
+
     if (camera.position.x > CONSTRAINT_SIZE) {
       camera.position.x = CONSTRAINT_SIZE;
     } else if (camera.position.x < -CONSTRAINT_SIZE) {
@@ -76,7 +73,17 @@ function setupEnvironment() {
     } else if (camera.position.z < -CONSTRAINT_SIZE) {
       camera.position.z = -CONSTRAINT_SIZE;
     }
+  }
+
+  document.addEventListener('keydown', (event) => {
+    moveCamera(event.key);
   }, false);
+
+  [...document.querySelectorAll<HTMLButtonElement>('#command-panel>div[data-cmd]')].forEach(btn => {
+    btn.addEventListener('click', () => {
+      moveCamera(btn.dataset.cmd!);
+    });
+  })
 
   const color = 0x282828;
   const light = new THREE.HemisphereLight(color, color, 1.8);
