@@ -12,6 +12,8 @@ export function createStar(): THREE.Object3D {
   starSupport.add(globe);
 
   const starLight = new THREE.PointLight(starColor, 1000, 100);
+  starLight.castShadow = true;
+  starLight.shadow.bias = -0.001;
   globe.add(starLight);
 
   return starSupport;

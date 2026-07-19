@@ -13,6 +13,7 @@ const CONSTRAINT_SIZE = 22;
 
 function setupEnvironment() {
   const { renderer, scene } = basicSetup(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
 
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera.position.z = 5;
@@ -21,6 +22,16 @@ function setupEnvironment() {
   const gridHelper = new THREE.GridHelper(50, 50);
   scene.add(gridHelper);
 
+  const floorGeometry = new THREE.PlaneGeometry(50, 50);
+  const floorMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+  const floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
+  floorMesh.rotateX(Math.PI / 2);
+  floorMesh.position.y = -0.01;
+  floorMesh.receiveShadow = true;
+  floorMesh.castShadow = true;
+
+  scene.add(floorMesh);
+
   loadBackground(scene);
 
   const globes = [
@@ -28,7 +39,6 @@ function setupEnvironment() {
     { color: 0x0000ff, size: 3, position: new THREE.Vector3(15, 8, 20) },
     { color: 0x00ff00, size: 2.5, position: new THREE.Vector3(0, 12, -15) }
   ].map(globe => createGlobe(globe.color, globe.size, globe.position));
-
   scene.add(...globes);
 
   const cubes = [
@@ -36,8 +46,12 @@ function setupEnvironment() {
     { color: 0xff00ff, size: 1.5, position: new THREE.Vector3(-20, 3, 10) },
     { color: 0x00ffff, size: 3.5, position: new THREE.Vector3(25, 6, -25) }
   ].map(cube => createCube(cube.color, cube.size, cube.position));
-
   scene.add(...cubes);
+
+  [...globes, ...cubes].forEach(singleGlobe => {
+    singleGlobe.castShadow = true;
+    singleGlobe.receiveShadow = true;
+  });
 
   const star = createStar();
   scene.add(star);
