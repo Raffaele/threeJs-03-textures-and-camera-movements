@@ -1,0 +1,23 @@
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+#command-panel {
+  border-radius: 100%;
+  grid-template-columns: 1fr 1fr;
+  display: grid;
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  overflow: hidden;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+#command-panel > div {
+  background-color: green;
+  width: 50px;
+  height: 50px;
+  margin: 2px;
+}
+/*# sourceMappingURL=03-textures-and-camera-movements.2cdaf7bc.css.map */
