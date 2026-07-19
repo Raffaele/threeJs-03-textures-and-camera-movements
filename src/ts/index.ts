@@ -82,6 +82,12 @@ function setupEnvironment() {
   const light = new THREE.HemisphereLight(color, color, 1.8);
   scene.add(light);
 
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
   function animate() {
     renderer.render(scene, camera);
     star.rotation.z += 0.0003;
