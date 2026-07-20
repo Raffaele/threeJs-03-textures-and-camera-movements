@@ -92,7 +92,7 @@ function setupEnvironment() {
     }
   })
 
-  const color = 0x282828;
+  const color = 0x585858;
   const light = new THREE.HemisphereLight(color, color, 1.8);
   scene.add(light);
 
