@@ -6,6 +6,7 @@ import { createGlobe } from './createGlobe';
 import { createCube } from './createCube';
 import { createStar } from './createStar';
 import { basicSetup } from './basicSetup';
+import { joystickEventHandler } from './JoystickEventHandler';
 
 const STEP = 0.25;
 const ROTATION_STEP = 0.05;
@@ -79,10 +80,16 @@ function setupEnvironment() {
     moveCamera(event.key);
   }, false);
 
-  [...document.querySelectorAll<HTMLButtonElement>('#command-panel>div[data-cmd]')].forEach(btn => {
-    btn.addEventListener('click', () => {
-      moveCamera(btn.dataset.cmd!);
-    });
+  joystickEventHandler.addEventListener((direction) => {
+    if (direction.vDirection === 1) {
+      moveCamera('ArrowUp');
+    } else if (direction.vDirection === -1) {
+      moveCamera('ArrowDown');
+    } else if (direction.hDirection === 1) {
+      moveCamera('ArrowLeft');
+    } else if (direction.hDirection === -1) {
+      moveCamera('ArrowRight');
+    }
   })
 
   const color = 0x282828;
