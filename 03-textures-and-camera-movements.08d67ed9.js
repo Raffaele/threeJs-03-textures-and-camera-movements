@@ -721,6 +721,7 @@ var _createGlobe = require("./createGlobe");
 var _createCube = require("./createCube");
 var _createStar = require("./createStar");
 var _basicSetup = require("./basicSetup");
+var _joystickEventHandler = require("./JoystickEventHandler");
 const STEP = 0.25;
 const ROTATION_STEP = 0.05;
 const CONSTRAINT_SIZE = 22;
@@ -803,14 +804,13 @@ function setupEnvironment() {
     document.addEventListener('keydown', (event)=>{
         moveCamera(event.key);
     }, false);
-    [
-        ...document.querySelectorAll('#command-panel>div[data-cmd]')
-    ].forEach((btn)=>{
-        btn.addEventListener('click', ()=>{
-            moveCamera(btn.dataset.cmd);
-        });
+    (0, _joystickEventHandler.joystickEventHandler).addEventListener((direction)=>{
+        if (direction.vDirection === 1) moveCamera('ArrowUp');
+        else if (direction.vDirection === -1) moveCamera('ArrowDown');
+        else if (direction.hDirection === 1) moveCamera('ArrowLeft');
+        else if (direction.hDirection === -1) moveCamera('ArrowRight');
     });
-    const color = 0x282828;
+    const color = 0x585858;
     const light = new _three.HemisphereLight(color, color, 1.8);
     scene.add(light);
     window.addEventListener('resize', ()=>{
@@ -831,7 +831,7 @@ function setupEnvironment() {
 }
 setupEnvironment();
 
-},{"three":"dsoTF","./loadBackground":"5dd6n","./getCameraStep":"5W3RA","./createGlobe":"dciLZ","./createCube":"aG3gx","./createStar":"8RpeK","./basicSetup":"bhi20"}],"dsoTF":[function(require,module,exports,__globalThis) {
+},{"three":"dsoTF","./loadBackground":"5dd6n","./getCameraStep":"5W3RA","./createGlobe":"dciLZ","./createCube":"aG3gx","./createStar":"8RpeK","./basicSetup":"bhi20","./JoystickEventHandler":"fNpbp"}],"dsoTF":[function(require,module,exports,__globalThis) {
 /**
  * @license
  * Copyright 2010-2026 Three.js Authors
@@ -54112,8 +54112,9 @@ function createStar() {
         color: starColor
     });
     const globe = new _three.Mesh(globeGeometry, globeMaterial);
-    globe.position.set(0, 30, 0);
+    globe.position.set(0, 40, 0);
     starSupport.add(globe);
+    starSupport.position.set(0, 10, 0);
     const starLight = new _three.PointLight(starColor, 1000, 100);
     starLight.castShadow = true;
     starLight.shadow.bias = -0.001;
@@ -54137,6 +54138,118 @@ function basicSetup(width, height) {
     };
 }
 
-},{"three":"dsoTF","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["kfq6T","ULrPB"], "ULrPB", "parcelRequireb39c", {}, "./", "/")
+},{"three":"dsoTF","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"fNpbp":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "joystickEventHandler", ()=>joystickEventHandler);
+class JoystickEventHandler {
+    constructor(){
+        this.listeners = [];
+        this.fullDirection = {
+            vDirection: 0,
+            hDirection: 0
+        };
+        [
+            ...document.querySelectorAll('#command-panel>div[data-cmd]')
+        ].forEach((btn)=>{
+            const direction = btn.dataset.cmd;
+            btn.addEventListener('touchstart', ()=>{
+                switch(direction){
+                    case 'ArrowUp':
+                        this.fullDirection.vDirection = 1;
+                        break;
+                    case 'ArrowDown':
+                        this.fullDirection.vDirection = -1;
+                        break;
+                    case 'ArrowLeft':
+                        this.fullDirection.hDirection = 1;
+                        break;
+                    case 'ArrowRight':
+                        this.fullDirection.hDirection = -1;
+                        break;
+                }
+            });
+            btn.addEventListener('mousedown', ()=>{
+                switch(direction){
+                    case 'ArrowUp':
+                        this.fullDirection.vDirection = 1;
+                        break;
+                    case 'ArrowDown':
+                        this.fullDirection.vDirection = -1;
+                        break;
+                    case 'ArrowLeft':
+                        this.fullDirection.hDirection = 1;
+                        break;
+                    case 'ArrowRight':
+                        this.fullDirection.hDirection = -1;
+                        break;
+                }
+            });
+            btn.addEventListener('touchend', ()=>{
+                switch(direction){
+                    case 'ArrowUp':
+                        this.fullDirection.vDirection = 0;
+                        break;
+                    case 'ArrowDown':
+                        this.fullDirection.vDirection = 0;
+                        break;
+                    case 'ArrowLeft':
+                        this.fullDirection.hDirection = 0;
+                        break;
+                    case 'ArrowRight':
+                        this.fullDirection.hDirection = 0;
+                        break;
+                }
+            });
+            btn.addEventListener('mouseup', ()=>{
+                switch(direction){
+                    case 'ArrowUp':
+                        this.fullDirection.vDirection = 0;
+                        break;
+                    case 'ArrowDown':
+                        this.fullDirection.vDirection = 0;
+                        break;
+                    case 'ArrowLeft':
+                        this.fullDirection.hDirection = 0;
+                        break;
+                    case 'ArrowRight':
+                        this.fullDirection.hDirection = 0;
+                        break;
+                }
+            });
+            btn.addEventListener('mouseout', ()=>{
+                switch(direction){
+                    case 'ArrowUp':
+                        this.fullDirection.vDirection = 0;
+                        break;
+                    case 'ArrowDown':
+                        this.fullDirection.vDirection = 0;
+                        break;
+                    case 'ArrowLeft':
+                        this.fullDirection.hDirection = 0;
+                        break;
+                    case 'ArrowRight':
+                        this.fullDirection.hDirection = 0;
+                        break;
+                }
+            });
+        });
+        setInterval(()=>{
+            this.listeners.forEach((singleListener)=>{
+                singleListener(this.fullDirection);
+            });
+        }, 100);
+    }
+    addEventListener(listener) {
+        if (!this.listeners.includes(listener)) this.listeners.push(listener);
+        return ()=>this.removeEventListener(listener);
+    }
+    removeEventListener(listener) {
+        this.listeners = this.listeners.filter((singleListener)=>singleListener !== listener);
+    }
+}
+const joystickEventHandler = new JoystickEventHandler();
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["kfq6T","ULrPB"], "ULrPB", "parcelRequireb39c", {}, "./", "/")
 
 //# sourceMappingURL=03-textures-and-camera-movements.08d67ed9.js.map
